@@ -16,8 +16,8 @@ class Block(nn.Module):
 
     Params
     ------
-    n_embed : int
-        embed dimensions
+    n_embd : int
+        embd dimensions
 
     n_head : int
         number of attention heads
@@ -51,7 +51,7 @@ class Block(nn.Module):
     def __init__(
         self, 
         *,
-        n_embed, 
+        n_embd, 
         n_head, 
         n_positions,
         attn_drop,
@@ -61,11 +61,11 @@ class Block(nn.Module):
 
         super().__init__()
 
-        self.ln_1 = nn.LayerNorm(n_embed, eps=layer_norm_epsilon)
-        self.ln_2 = nn.LayerNorm(n_embed, eps=layer_norm_epsilon)
+        self.ln_1 = nn.LayerNorm(n_embd, eps=layer_norm_epsilon)
+        self.ln_2 = nn.LayerNorm(n_embd, eps=layer_norm_epsilon)
 
         self.attention = nn.MultiHeadAttention(
-            embed_dim=n_embed,
+            embd_dim=n_embd,
             num_heads=n_head,
             dropout=attn_pdrop,
             bias=True,
@@ -78,9 +78,9 @@ class Block(nn.Module):
         )
 
         self.mlp = nn.Sequential(
-            nn.Linear(n_embed, 4*n_embed),
+            nn.Linear(n_embd, 4*n_embd),
             CustomGELU(),
-            nn.Linear(4*n_embed, n_embed),
+            nn.Linear(4*n_embd, n_embd),
             nn.Dropout(resid_pdrop),
         )
 
@@ -91,16 +91,16 @@ class Block(nn.Module):
             parameters
             ----------
             x : torch.Tensor
-                input tensor of shape (batch_size, n_tokens, n_embed)
+                input tensor of shape (batch_size, n_tokens, n_embd)
 
             returns
             -------
             torch.Tensor
-                output tensor of shape (batch_size, n_tokens, n_embed)
+                output tensor of shape (batch_size, n_tokens, n_embd)
 
             """
 
-            batch_size, n_tokens, n_embed = x.shape
+            batch_size, n_tokens, n_embd = x.shape
             x_ = self.ln_1(x) #layer norm
             mask = self.mask[:n_tokens, :n_tokens]
 
@@ -126,8 +126,8 @@ class GPT(nn.Module):
     n_layer : int
         number of decoder blocks to include
 
-    n_embed : int
-        dimensionality of embeddings
+    n_embd : int
+        dimensionality of embddings
 
     n_head : int
         number of attention heads
@@ -139,7 +139,7 @@ class GPT(nn.Module):
         probability of dropout on attention weights
 
     embd_pdrop : float
-        Probability of dropout on the sum of embeddings
+        Probability of dropout on the sum of embddings
 
     resid_pdrop : float
         Probability of dropout after applying the MLP
@@ -148,14 +148,14 @@ class GPT(nn.Module):
         Hyperparameter of layer normalization
     Attributes
     ----------
-    token_emb : nn.Embedding
-        Token embeddings
+    token_emb : nn.embdding
+        Token embddings
 
-    pos_emb : nn.Embedding
-        Positional embedding
+    pos_emb : nn.embdding
+        Positional embdding
 
     drop : nn.Dropout
-        Dropout module to be applied on the sum of embeddings
+        Dropout module to be applied on the sum of embddings
 
     blocks : nn.Sequential
         List of decoder blocks
@@ -182,8 +182,8 @@ class GPT(nn.Module):
     ):
         super().__init__()
         self.n_positions = n_positions
-        self.token_emb = nn.Embedding(vocab_size, n_embd)
-        self.pos_emb = nn.Embedding(n_positions, n_embd)
+        self.token_emb = nn.embdding(vocab_size, n_embd)
+        self.pos_emb = nn.embdding(n_positions, n_embd)
 
         self.drop = nn.Dropout(embd_pdrop)
 
