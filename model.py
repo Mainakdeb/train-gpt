@@ -127,7 +127,7 @@ class GPT(nn.Module):
         number of decoder blocks to include
 
     n_embd : int
-        dimensionality of embddings
+        dimensionality of embeddings
 
     n_head : int
         number of attention heads
@@ -139,7 +139,7 @@ class GPT(nn.Module):
         probability of dropout on attention weights
 
     embd_pdrop : float
-        Probability of dropout on the sum of embddings
+        Probability of dropout on the sum of embeddings
 
     resid_pdrop : float
         Probability of dropout after applying the MLP
@@ -148,14 +148,14 @@ class GPT(nn.Module):
         Hyperparameter of layer normalization
     Attributes
     ----------
-    token_emb : nn.embdding
-        Token embddings
+    token_emb : nn.embedding
+        Token embeddings
 
-    pos_emb : nn.embdding
-        Positional embdding
+    pos_emb : nn.embedding
+        Positional embedding
 
     drop : nn.Dropout
-        Dropout module to be applied on the sum of embddings
+        Dropout module to be applied on the sum of embeddings
 
     blocks : nn.Sequential
         List of decoder blocks
@@ -182,8 +182,8 @@ class GPT(nn.Module):
     ):
         super().__init__()
         self.n_positions = n_positions
-        self.token_emb = nn.embdding(vocab_size, n_embd)
-        self.pos_emb = nn.embdding(n_positions, n_embd)
+        self.token_emb = nn.embedding(vocab_size, n_embd)
+        self.pos_emb = nn.embedding(n_positions, n_embd)
 
         self.drop = nn.Dropout(embd_pdrop)
 
