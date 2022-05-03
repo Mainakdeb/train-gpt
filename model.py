@@ -148,10 +148,10 @@ class GPT(nn.Module):
         Hyperparameter of layer normalization
     Attributes
     ----------
-    token_emb : nn.embedding
+    token_emb : nn.Embedding
         Token embeddings
 
-    pos_emb : nn.embedding
+    pos_emb : nn.Embedding
         Positional embedding
 
     drop : nn.Dropout
@@ -182,8 +182,8 @@ class GPT(nn.Module):
     ):
         super().__init__()
         self.n_positions = n_positions
-        self.token_emb = nn.embedding(vocab_size, n_embd)
-        self.pos_emb = nn.embedding(n_positions, n_embd)
+        self.token_emb = nn.Embedding(vocab_size, n_embd)
+        self.pos_emb = nn.Embedding(n_positions, n_embd)
 
         self.drop = nn.Dropout(embd_pdrop)
 
