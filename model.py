@@ -54,7 +54,7 @@ class Block(nn.Module):
         n_embd, 
         n_head, 
         n_positions,
-        attn_drop,
+        attn_pdrop,
         resid_pdrop,
         layer_norm_epsilon
     ):
