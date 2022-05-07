@@ -65,7 +65,7 @@ class Block(nn.Module):
         self.ln_2 = nn.LayerNorm(n_embd, eps=layer_norm_epsilon)
 
         self.attention = nn.MultiheadAttention(
-            embd_dim=n_embd,
+            embed_dim=n_embd,
             num_heads=n_head,
             dropout=attn_pdrop,
             bias=True,
