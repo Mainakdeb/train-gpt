@@ -84,34 +84,34 @@ class Block(nn.Module):
             nn.Dropout(resid_pdrop),
         )
 
-        def forward(self, x):
-            """
-            Forward pass
+    def forward(self, x):
+        """
+        Forward pass
 
-            parameters
-            ----------
-            x : torch.Tensor
-                input tensor of shape (batch_size, n_tokens, n_embd)
+        parameters
+        ----------
+        x : torch.Tensor
+            input tensor of shape (batch_size, n_tokens, n_embd)
 
-            returns
-            -------
-            torch.Tensor
-                output tensor of shape (batch_size, n_tokens, n_embd)
+        returns
+        -------
+        torch.Tensor
+            output tensor of shape (batch_size, n_tokens, n_embd)
 
-            """
+        """
 
-            batch_size, n_tokens, n_embd = x.shape
-            x_ = self.ln_1(x) #layer norm
-            mask = self.mask[:n_tokens, :n_tokens]
+        batch_size, n_tokens, n_embd = x.shape
+        x_ = self.ln_1(x) #layer norm
+        mask = self.mask[:n_tokens, :n_tokens]
 
-            attn_out, _ = self.attention(
-                x_, x_, x_, attn_mask = mask, need_weights = False
-            )
+        attn_out, _ = self.attention(
+            x_, x_, x_, attn_mask = mask, need_weights = False
+        )
 
-            x = x + attn_out
-            x = self.mlp(self.ln_2(x))
+        x = x + attn_out
+        x = self.mlp(self.ln_2(x))
 
-            return(x)
+        return(x)
 
 
 class GPT(nn.Module):
