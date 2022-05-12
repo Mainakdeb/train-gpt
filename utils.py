@@ -82,7 +82,7 @@ def copy_model(model_official, model_ours):
     copy_parameter(m_a.lm_head.weight, m_b.head.weight)
 
 @torch.no_grad()
-def generate_token(model, token_ixs, temperature=1.0, top_k=None):
+def generate_token(model, token_ixs, sample, temperature=1.0, top_k=None):
     """
     Generate a single token, given previous tokens
 
