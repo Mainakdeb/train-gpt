@@ -5,7 +5,7 @@ def copy_parameter(param_official, param_ours):
     """
     copy values from tensor
 
-    parameters
+    Parameters
     ----------
     param_official : torch.Tensor
         the tensor which would be copied
@@ -15,7 +15,6 @@ def copy_parameter(param_official, param_ours):
         param official
 
     """
-
     if param_official.shape != param_ours.shape:
         raise ValueError("the shapes of tensors are different")
     
@@ -81,3 +80,55 @@ def copy_model(model_official, model_ours):
     copy_parameter(m_a.transformer.ln_f.weight, m_b.ln.weight)
     copy_parameter(m_a.transformer.ln_f.bias, m_b.ln.bias)
     copy_parameter(m_a.lm_head.weight, m_b.head.weight)
+
+@torch.no_grad()
+def generate_token(model, token_ixs, temperature=1.0, top_k=None):
+    """
+    Generate a single token, given previous tokens
+
+    Parameters
+    ----------
+    model : GPT
+        our GPT model
+
+    Token_ixs : list
+        list of conditional input token ids
+    
+    temperature : float
+        higher temperature -> higher variability
+    
+    sample : bool
+        if True -> sample randomly from distribution, 
+        else take argmax
+    
+    top_k : int or None
+        if not None -> modify distribution to have top k most 
+        probable outcomes
+
+    Returns
+    -------
+    new_token_ix : int
+        index of new token
+
+    """
+    context_token_ixs = token_ixs[-model.n_positions : ]
+    ixs = torch.tensor(context_token_ixs).to(dtype=torch.long)[
+        None, :
+    ] #(1, n_tokens) add dummy patch_dim 
+    
+    logits_all = model(ixs)
+    logits = logits_all[0, -1, :] #take only last token embedding of first batch sample
+    logits = logits/temperature
+    
+    if top_k is not None:
+        top_values, _ = torch.topk(logits, top_k)
+        logits[logits < top_values.min()] = -torch.inf
+
+    probs = torch.nn.functional.softmax(logits, dim=0)
+
+    if sample:
+        new_token_ix = torch.multinomial(probs, num_samples=1)
+    else:
+        new_token_ix = probs.argmax()
+
+    return(new_token_ix.item())
